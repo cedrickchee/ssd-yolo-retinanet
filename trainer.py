@@ -14,9 +14,9 @@ from torch.autograd import Variable
 import torch.utils.data as data
 import torch.nn.functional as F
 
-from data import FashionDetection, Augmentation, testTransform
+from data import VOCDetection, Augmentation, testTransform
 
-from models.Loss import focalLoss
+from models.Loss import focalLoss, multiBoxLoss
 from models.RetinaNet import retinaNet
 from data.Anchor import Decoder
 from eval import Testor
@@ -36,6 +36,7 @@ parser.add_argument('--image_size', default = 300, type = int, help = "Image siz
 parser.add_argument('--max_iter', default = 2500000, type = int, help = "Maximum number of iteration")
 parser.add_argument('--decay_steps', default = None, nargs = '+', type = int, help = "Decay the learning rate for each steps")
 parser.add_argument('--optim', default = 'SGD', type = str, help = "Optimizer for training")
+parser.add_argument('--loss_type', default = 'focal', type = str, help = "Loss function to use")
 args = parser.parse_args()
 
 net = retinaNet(args.num_classes, n_anchor = 9)
@@ -57,7 +58,13 @@ if args.optim.lower() == 'adam':
 else:
     opt = optim.SGD(net.parameters(), lr = args.lr, momentum = args.momentum, weight_decay = args.weight_decay)
 #opt = optim.Adam(net.parameters(), lr = args.lr)
-focal_loss = focalLoss()
+
+criterion = None
+if args.loss_type.lower() == 'ce':
+    criterion = multiBoxLoss()
+elif args.loss_type.lower() == 'focal':
+    criterion = focalLoss()
+
 print(" [*] Training is ready now!")
 
 def train():
@@ -69,13 +76,14 @@ def train():
 
     print(" [*] Loading dataset...")
     batch_iterator = None #?
-    trainset = FashionDetection(os.getcwd() + "/data/omni_v2", args.image_size,
-                Augmentation(args.image_size, args.means), split = 'trainval')
+    trainset = VOCDetection(os.getcwd() + "/data/VOC_root", [('2007', 'trainval'), 
+            ('2012', 'trainval')], args.image_size, 
+            Augmentation(args.image_size, args.means))
     train_loader = data.DataLoader(trainset, args.batch_size, num_workers = 4,
                 shuffle = False, collate_fn = trainset.detection_collate, pin_memory = True)
 
-    testset = FashionDetection(os.getcwd() + "/data/omni_v2", args.image_size,
-                testTransform(args.image_size, args.means), split = 'test')
+    testset = VOCDetection(os.getcwd() + "/data/VOC_root", [('2007', 'test')],
+            args.image_size, testTransform(args.image_size, args.means))
     test_loader = data.DataLoader(testset, args.batch_size, num_workers = 4,
                 shuffle = False, collate_fn = testset.detection_collate, pin_memory = True)
 
@@ -112,7 +120,7 @@ def train():
         conf_preds, loc_preds = net(images)
         opt.zero_grad()
 
-        c_loss, l_loss = focal_loss((conf_preds, loc_preds), (conf_targets, loc_targets))
+        c_loss, l_loss = criterion((conf_preds, loc_preds), (conf_targets, loc_targets))
         t2 = time.time()
         loss = (c_loss + l_loss)
         loss.backward()
@@ -144,7 +152,7 @@ def train():
                     test_loc_targets = test_loc_targets.cuda()
 
                 test_conf_preds, test_loc_preds = net(test_images)
-                c_loss, l_loss = focal_loss((test_conf_preds, test_loc_preds),
+                c_loss, l_loss = criterion((test_conf_preds, test_loc_preds),
                                         (test_conf_targets, test_loc_targets))
 
                 for i in range(len(test_images)):
