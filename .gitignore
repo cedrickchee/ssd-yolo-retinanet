@@ -1,0 +1,16 @@
+dataset
+results
+examples
+!visual/*.py
+visual/*/events*
+data/omni*
+*.pyc
+*.png
+*.jpg
+*.jpeg
+*.xlsx
+*.zip
+*.pkl
+*.csv
+*.swp
+*.pth
