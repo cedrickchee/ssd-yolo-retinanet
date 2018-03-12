@@ -26,7 +26,7 @@ import argparse
 parser = argparse.ArgumentParser(description = 'Training arguments for RetinaNet')
 parser.add_argument('--batch_size', default = 20, type = int, help = "Number of inputs at once")
 parser.add_argument('--lr', default = 1e-3, type = float, help = "initial learning rate")
-parser.add_argument('--num_classes', default = 8, type = int, help = "Number of classes")
+parser.add_argument('--num_classes', default = 20, type = int, help = "Number of classes")
 parser.add_argument('--cuda', default = True, type = bool, help = "Use cuda to train")
 parser.add_argument('--experiment_name', default = 'VOC_default', type = str, help = "Name for logging")
 parser.add_argument('--weight_decay', default = 1e-4, type = float, help = "weight decay rate")

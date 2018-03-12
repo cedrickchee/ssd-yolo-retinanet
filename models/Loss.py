@@ -34,6 +34,7 @@ class multiBoxLoss(nn.Module):
         conf_targets[ignored] = 0
         pos = conf_targets > 0
         batch_conf = conf_preds.view(-1, conf_preds.size(2))
+
         gathered_conf = batch_conf.gather(1, conf_targets.view(-1, 1))
         loss_c = log_sum_exp(batch_conf) - gathered_conf
 
