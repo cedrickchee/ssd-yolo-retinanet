@@ -28,7 +28,7 @@ parser.add_argument('--batch_size', default = 20, type = int, help = "Number of 
 parser.add_argument('--lr', default = 1e-3, type = float, help = "initial learning rate")
 parser.add_argument('--num_classes', default = 8, type = int, help = "Number of classes")
 parser.add_argument('--cuda', default = True, type = bool, help = "Use cuda to train")
-parser.add_argument('--experiment_name', default = 'retina_1', type = str, help = "Name for logging")
+parser.add_argument('--experiment_name', default = 'VOC_default', type = str, help = "Name for logging")
 parser.add_argument('--weight_decay', default = 1e-4, type = float, help = "weight decay rate")
 parser.add_argument('--momentum', default = 0.9, type = float, help = "Momentum for SGD")
 parser.add_argument('--means', default = None, nargs = '+', type = int, help = "Subtract means from samples")
@@ -37,9 +37,10 @@ parser.add_argument('--max_iter', default = 2500000, type = int, help = "Maximum
 parser.add_argument('--decay_steps', default = None, nargs = '+', type = int, help = "Decay the learning rate for each steps")
 parser.add_argument('--optim', default = 'SGD', type = str, help = "Optimizer for training")
 parser.add_argument('--loss_type', default = 'focal', type = str, help = "Loss function to use")
+parser.add_argument('--resume', default = None, type = str, help = "Train again from paused ckpt")
 args = parser.parse_args()
 
-net = retinaNet(args.num_classes, n_anchor = 9)
+net = retinaNet(args.num_classes, 9, args.resume)
 
 if args.cuda and torch.cuda.is_available():
     print(" [*] Set cuda: True")
@@ -49,6 +50,10 @@ if args.cuda and torch.cuda.is_available():
 else:
     print(" [*] Set cuda: False")
     #torch.set_default_tensor_type('torch.FloatTensor')
+
+if args.resume:
+    print(" [*] Train started from pretrained %s"%args.resume)
+    net.load_state_dict(torch.load('./ckpt/%s'%args.resume))
 
 logger = Logger('./visual/' + args.experiment_name)
 
@@ -83,7 +88,7 @@ def train():
                 shuffle = False, collate_fn = trainset.detection_collate, pin_memory = True)
 
     testset = VOCDetection(os.getcwd() + "/data/VOC_root", [('2007', 'test')],
-            args.image_size, testTransform(args.image_size, args.means))
+                args.image_size, testTransform(args.image_size, args.means))
     test_loader = data.DataLoader(testset, args.batch_size, num_workers = 4,
                 shuffle = False, collate_fn = testset.detection_collate, pin_memory = True)
 
@@ -94,7 +99,15 @@ def train():
     steps = 0 # decay step
 
     epoch_size = len(trainset) // args.batch_size
-    for iteration in range(0, args.max_iter):
+
+    start_iter = 0
+    if args.resume:
+        name = args.resume.split('.pth')[0]
+        start_iter = int(name.split('_')[-1])
+        epoch = int(start_iter / epoch_size)
+        print(" [*] start itaration: %d"%start_iter)
+
+    for iteration in range(start_iter, args.max_iter):
         if (not batch_iterator) or (iteration % epoch_size == 0):
             batch_iterator = iter(train_loader)
 
@@ -133,7 +146,7 @@ def train():
 
         if (iteration % 10) == 0: # display period
             print(" [*] Epoch[%d], Iter %d || Loss: %.4f || c_loss: %.4f || l_loss: %.4f || Timer: %.4fsec"%(epoch, iteration, loss.data[0], c_loss.data[0], l_loss.data[0], (t1 - t0)))
-        if (iteration % 1000) == 0: # evaluation period
+        if (iteration % 5000) == 0: # evaluation period
             net.eval()
 
             test_loss = []

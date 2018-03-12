@@ -156,3 +156,44 @@ class VOCDetection(data.Dataset):
         '''
         return torch.Tensor(self.pull_image(index)).unsqueeze_(0)
 
+    def detection_collate(self, batch):
+        
+        imgs = []
+        loc_targets = []
+        conf_targets = []
+
+        for sample in batch:
+            imgs.append(sample[0])
+            conf_target, loc_target = self.encoder(sample[1], sample[2])
+            conf_targets.append(conf_target)
+            loc_targets.append(loc_target)
+        return torch.stack(imgs, 0), torch.stack(conf_targets), torch.stack(loc_targets)
+
+if __name__ == '__main__':
+    from .augmentation import Augmentation
+
+    image_size = 300 # size to resize
+    dataset = VOCDetection(os.getcwd() + "/data/VOC_root", [('2007', 'trainval'),
+            ('2012', 'trainval')], image_size,
+            Augmentation(image_size, (104, 123, 114)))
+    dataloader = data.DataLoader(dataset, batch_size = 32,
+            shuffle = True, collate_fn = dataset.detection_collate, num_workers = 1)
+
+    for images, conf_targets, loc_targets in dataloader:
+        print(" [*] images:", images.size())
+        print(" [*] conf_targets:", conf_targets.size())
+        print(" [*] loc_targets:", loc_targets.size())
+        break
+
+
+    testset = VOCDetection(os.getcwd() + "/data/VOC_root", [('2007', 'test')],
+            image_size, Augmentation(image_size, (104, 123, 114)))
+    testloader = data.DataLoader(testset, batch_size = 32,
+            shuffle = False, collate_fn = testset.detection_collate, num_workers = 1)
+
+    for images, conf_targets, loc_targets in testloader:
+        print(" [*] test images:", images.size())
+        print(" [*] test conf_targets:", conf_targets.size())
+        print(" [*] test loc_targets:", loc_targets.size())
+        break
+

@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -6,10 +7,10 @@ from .Backbone import featurePyramid
 from .Subnet import classification, boxRegression
 
 class retinaNet(nn.Module):
-    def __init__(self, n_cls, n_anchor):
+    def __init__(self, n_cls, n_anchor, resume):
         super(retinaNet, self).__init__()
     
-        self.feature_pyramid = featurePyramid()
+        self.feature_pyramid = featurePyramid(False if resume else True)
         self.conf_layer = classification(n_cls, n_anchor)
         self.loc_layer = boxRegression(n_anchor)
 

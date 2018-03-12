@@ -1,2 +1,2 @@
 from .augmentation import Augmentation, testTransform
-from .omni_fashion import FashionDetection
+from .voc0712 import VOCDetection

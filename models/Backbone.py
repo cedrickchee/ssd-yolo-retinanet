@@ -8,11 +8,11 @@ from .ResNet import resnet50
 # Build FPN on top of the ResNet architecture
 
 class featurePyramid(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained = True):
         super(featurePyramid, self).__init__()
         # Can we remove hard code?
 
-        self.resnet = resnet50(pretrained = True) # which is better?
+        self.resnet = resnet50(pretrained = pretrained) # which is better?
 
         self.conv_3_1 = nn.Conv2d(512, 256, kernel_size = 1)
         self.conv_4_1 = nn.Conv2d(1024, 256, kernel_size = 1) 

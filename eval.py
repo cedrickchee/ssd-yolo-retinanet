@@ -6,9 +6,10 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 class Testor(object):
-    def __init__(self, dataset, save_folder):
+    def __init__(self, dataset, save_folder, YEAR = 2007):
         self.dataset = dataset
         self.save_folder = save_folder # root_path
+        self.YEAR = YEAR
 
     def xml2rec(self, filename):
         tree = ET.parse(filename)
@@ -159,7 +160,7 @@ class Testor(object):
     def evaluate_detections(self, box_list, exp_name, iteration):
         self.write_results_file(box_list, exp_name, iteration)
 
-        image_names, recs = self.load_label('data/omni_v2/Annotations', 'data/omni_v2/ImageSets/Main/test.txt')
+        image_names, recs = self.load_label('data/VOC_root/VOC%s/Annotations'%self.YEAR, 'data/VOC_root/VOC%s/ImageSets/Main/test.txt'%self.YEAR)
 
         aps = []
         for i, cls_name in enumerate(labelmap):

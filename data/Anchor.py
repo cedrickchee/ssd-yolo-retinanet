@@ -146,7 +146,7 @@ class Decoder(Anchor):
         # decoded_boxes
         decoded_boxes = torch.clamp(decoded_boxes, min = 0., max = 1.)
         
-        top_k = 200 # temporal
+        top_k = 5 # temporal
         output = torch.zeros(1, conf_preds.size(1), top_k, 5)
         for cl in range(1, conf_preds.size(1)): # ignore background
             # For each class, perform nms
@@ -178,7 +178,6 @@ def one_hot(x, n):
 
 if __name__ == '__main__':
     import numpy as np
-    import pdb
     from .augmentation import Augmentation
 
     augment = Augmentation(300, [107, 113, 123])
@@ -201,7 +200,6 @@ if __name__ == '__main__':
     imgs, boxes, labels = augment(imgs, boxes, labels)
     print("after augment", boxes)
     print(labels)
-    pdb.set_trace()
     boxes, labels = torch.from_numpy(boxes), torch.from_numpy(labels)
 
     conf_target, loc_target = encoder(boxes, labels)
