@@ -1,5 +1,5 @@
 import os
-from data.omni_fashion import OMNI_CLASSES as labelmap
+from data.voc0712 import VOC_CLASSES as labelmap
 
 import pickle
 import xml.etree.ElementTree as ET
