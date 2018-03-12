@@ -43,3 +43,8 @@ sh data/scripts/VOC2012.sh # <directory>
     - Easy to read and very active repository. This repo drive me complete my code
 - [Another pytorch version](https://github.com/kuangliu/pytorch-retinanet)
     - Almost all code are followed from this repository, but this repo is not complete yet
+
+#### Author
+jtlee at omnious dot com
+
+Feel free to contact me about code.
