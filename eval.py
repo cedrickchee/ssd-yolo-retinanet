@@ -5,6 +5,7 @@ import pickle
 import xml.etree.ElementTree as ET
 import numpy as np
 
+keep_difficult = False
 class Testor(object):
     def __init__(self, dataset, save_folder, YEAR = 2007):
         self.dataset = dataset
@@ -15,6 +16,9 @@ class Testor(object):
         tree = ET.parse(filename)
         objects = []
         for obj in tree.findall('object'):
+            difficult = int(obj.find('difficult').text) == 1
+            if not keep_difficult and difficult:
+                continue
             obj_struct = {}
             obj_struct['name'] = obj.find('name').text
             bbox = obj.find('bndbox')

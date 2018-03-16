@@ -87,7 +87,7 @@ class VOCDetection(data.Dataset):
                 self.ids.append((rootpath, line.strip()))
 
     def __getitem__(self, index):
-        img, boxes, labels, w, h = self.pull_item(index)
+        img, boxes, labels, h, w = self.pull_item(index)
         return img, boxes, labels, w, h
         
     def __len__(self):
@@ -139,7 +139,7 @@ class VOCDetection(data.Dataset):
         '''
         img_id = self.ids[index]
         anno = ET.parse(self._annopath % img_id).getroot()
-        target = xml2Tensor(annot)
+        target = xml2Tensor(anno)
         boxes, labels = target[:, :4], target[:, 4]
         return img_id[1], boxes, labels
     

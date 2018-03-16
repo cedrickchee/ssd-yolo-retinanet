@@ -146,7 +146,7 @@ class Decoder(Anchor):
         # decoded_boxes
         decoded_boxes = torch.clamp(decoded_boxes, min = 0., max = 1.)
         
-        top_k = 5 # temporal
+        top_k = 200 # temporal
         output = torch.zeros(1, conf_preds.size(1), top_k, 5)
         for cl in range(1, conf_preds.size(1)): # ignore background
             # For each class, perform nms
