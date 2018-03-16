@@ -36,6 +36,7 @@ sh data/scripts/VOC2012.sh # <directory>
 - [ ] Comparing btw CE loss and focal loss
 - [ ] Report results on VOC
 - [ ] Report results on COCO
+- [ ] Use relative path for easy reproducing of result
 
 ### References
 
