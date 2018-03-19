@@ -35,6 +35,7 @@ sh data/scripts/VOC2012.sh # <directory>
 - [x] Apply cross entropy loss and focal loss(still checking it's works or not)
 - [ ] Comparing btw CE loss and focal loss
 - [ ] Report results on VOC
+    - currently i get 50mAP on VOC2007. There is some problem that i don't know yet.
 - [ ] Report results on COCO
 - [ ] Use relative path for easy reproducing of result
 
