@@ -1,15 +1,29 @@
-# RetinaNet-pytorch
-This repo aims to implement a "Focal loss for Dense Object Detection"
+# Realtime Multi-object Detection Pipeline
+
+_Note: this repo is currently under heavy development. Not ready for general consumption. So, please refrain from using it in production._
+
+The goal of this project is to buid a real-time state-of-the-art multi-object detection pipeline that can be jointly train in single stage.
+
+The PyTorch implementation will Weave together these techniques and methods from various research papers:
+
+* Single Shot MultiBox Detector (SSD)
+* YOLOv3 real-time properties
+* Focal loss for dense object detection (RetinaNet)
+* Non Maximum Suppression (NMS)
+* Scalable object detection using deep neural networks
+* Faster R-CNN tricks
+
+We will be using Pascal VOC2007 dataset.
 
 ### Requirements
-- python 3
-- [Pytorch 0.4](https://github.com/pytorch/pytorch#from-source)
-- [torchvision](https://github.com/pytorch/vision)
+- Python 3
+- Pytorch 0.4
 - numpy
-- [tensorflow](https://www.tensorflow.org/install/)
+- fastai PyTorch library
 
 ### Training
-```Shell
+
+```shell
 # Select the script that you want to train for reproducing a results
 ./retina_ce_sgd_0.001.sh
 # For the focal loss use ./retina_focal_sgd_0.0001.sh
@@ -18,35 +32,27 @@ This repo aims to implement a "Focal loss for Dense Object Detection"
 You can see the details in trainer.py
 
 ### VOC Dataset
-#####Download VOC2007 trainval & test
-```Shell
+
+##### Download VOC2007 trainval & test
+
+```shell
 # specify a directory for dataset to be downloaded into, else default is ~/data/
 sh data/scripts/VOC2007.sh # <directory>
 ```
-#####Download VOC2012 trainval
-```Shell
+
+##### Download VOC2012 trainval
+
+```shell
 # specify a directory for dataset to be downloaded into, else default is ~/data/
 sh data/scripts/VOC2012.sh # <directory>
 ```
 
 ### TODO
 
-- [x] Building RetinaNet
-- [x] Apply cross entropy loss and focal loss(still checking it's works or not)
-- [ ] Comparing btw CE loss and focal loss
+- [x] Build SSD + YOLO model
+- [x] Apply cross entropy loss and focal loss
+- [x] Compare between CE loss and focal loss
 - [ ] Report results on VOC
-    - currently i get 50mAP on VOC2007. There is some problem that i don't know yet.
+    - currently achieved 50mAP on VOC2007.
 - [ ] Report results on COCO
 - [ ] Use relative path for easy reproducing of result
-
-### References
-
-- [Keras version](https://github.com/fizyr/keras-retinanet)
-    - Easy to read and very active repository. This repo drive me complete my code
-- [Another pytorch version](https://github.com/kuangliu/pytorch-retinanet)
-    - Almost all code are followed from this repository, but i am not sure this repo works
-
-#### Author
-jtlee at omnious dot com
-
-Feel free to contact me about code.
