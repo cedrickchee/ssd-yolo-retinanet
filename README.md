@@ -1,10 +1,8 @@
 # Realtime Multi-object Detection Pipeline
 
-_Note: this repo is currently under heavy development. Not ready for general consumption. So, please refrain from using it in production._
+_Note: this repo is currently under heavy development. It's not ready for general consumption. So, please refrain yourself from using it in production._
 
-The goal of this project is to buid a real-time state-of-the-art multi-object detection pipeline that can be jointly train in single stage.
-
-The PyTorch implementation will Weave together these techniques and methods from various research papers:
+The goal of this project is to buid a single end-to-end deep learning model for more accurate and faster (near real-time) multi-object detection that can be train in single-pass of multiple different pieces:
 
 * Single Shot MultiBox Detector (SSD)
 * YOLOv3 real-time properties
@@ -12,6 +10,8 @@ The PyTorch implementation will Weave together these techniques and methods from
 * Non Maximum Suppression (NMS)
 * Scalable object detection using deep neural networks
 * Faster R-CNN tricks
+
+These techniques and methods from various research papers will be implemented using PyTorch.
 
 We will be using Pascal VOC2007 dataset.
 
